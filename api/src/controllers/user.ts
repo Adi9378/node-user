@@ -24,10 +24,10 @@ exports.register = async (req: any, res: any) => {
         ],
       };
     });
-    res.status(412).send(errors);
+    return res.status(412).send(errors);
   }
   if (req.body.password !== req.body.checkPassword) {
-    res.status(412).send({
+    return res.status(412).send({
       checkPassword: "Les mots de passe ne correspondent pas",
       password: "Les mots de passe ne correspondent pas",
     });
@@ -37,13 +37,13 @@ exports.register = async (req: any, res: any) => {
     const UserRepo = new UserRepository();
     const response1: any = await UserRepo.getByEmail(req.body.email);
     if (Object.keys(response1).length !== 0) {
-      res
+      return res
         .status(409)
         .send({ problem: "email", message: "Cet email existe déjà" });
     }
     const response2: any = await UserRepo.getByUsername(req.body.username);
     if (Object.keys(response2).length !== 0) {
-      res
+      return res
         .status(409)
         .send({ problem: "username", message: "Cet username existe déjà" });
     }
@@ -61,7 +61,7 @@ exports.register = async (req: any, res: any) => {
       };
 
       await UserRepo.create(dataForm);
-      res.status(201).send("User created");
+      return res.status(201).send("User created");
     }
   } catch (error) {
     throw new Error(error);
@@ -117,6 +117,7 @@ exports.login = async (req: any, res: any) => {
   );
 };
 
+/*
 exports.getUserById = async (req: any, res: any) => {
   try {
     const UserRepo: UserRepository = new UserRepository();
@@ -132,7 +133,7 @@ exports.getUserById = async (req: any, res: any) => {
   } catch (error: any) {
     throw new Error(error);
   }
-};
+};*/
 
 exports.getUser = async (req: any, res: any) => {
   /*if( !isEmail(req.params.email )){
