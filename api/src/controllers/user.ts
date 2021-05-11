@@ -4,15 +4,19 @@ import { validate } from "class-validator";
 import UserLoginValidator from "../validators/userLogin";
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+require('dotenv').config();
 
 exports.register = async (req: any, res: any) => {
+  console.log('yeak');
+  
   const userValid: UserValidator = new UserValidator(
     req.body.email,
     req.body.password,
     req.body.checkPassword,
     req.body.username
-  );
-
+    );
+    
+    console.log('iddddd', process.env.HOST, process.env.USER, process.env.PASSWORD, process.env.DATABASE)
   const err = await validate(userValid);
   if (err.length > 0) {
     let errors = {};

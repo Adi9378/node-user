@@ -1,6 +1,7 @@
 import mysql, { Connection } from 'mysql';
+require('dotenv').config()
 
-const connection: Connection = mysql.createConnection({
+const connection: any = mysql.createConnection({
     host: process.env.HOST,
     user: process.env.USER,
     password: process.env.PASSWORD,
