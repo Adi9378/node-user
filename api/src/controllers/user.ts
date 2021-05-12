@@ -4,28 +4,26 @@ import { validate } from "class-validator";
 import UserLoginValidator from "../validators/userLogin";
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-require('dotenv').config();
+require("dotenv").config();
 
 exports.register = async (req: any, res: any) => {
-  console.log('yeak');
-  
+  console.log("yeak");
+
   const userValid: UserValidator = new UserValidator(
     req.body.email,
     req.body.password,
     req.body.checkPassword,
     req.body.username
-    );
-    
-    console.log('iddddd', process.env.HOST, process.env.USER, process.env.PASSWORD, process.env.DATABASE)
+  );
+
   const err = await validate(userValid);
   if (err.length > 0) {
     let errors = {};
     err.map((oneError: any) => {
       errors = {
         ...errors,
-        [oneError.property]: oneError.constraints![
-          Object.keys(oneError.constraints!)[0]
-        ],
+        [oneError.property]:
+          oneError.constraints![Object.keys(oneError.constraints!)[0]],
       };
     });
     return res.status(412).send(errors);
@@ -40,22 +38,19 @@ exports.register = async (req: any, res: any) => {
   try {
     const UserRepo = new UserRepository();
     const response1: any = await UserRepo.getByEmail(req.body.email);
-    if (Object.keys(response1).length !== 0) {
+    if (response1.length !== 0) {
       return res
         .status(409)
         .send({ problem: "email", message: "Cet email existe déjà" });
     }
     const response2: any = await UserRepo.getByUsername(req.body.username);
-    if (Object.keys(response2).length !== 0) {
+    if (response2.length !== 0) {
       return res
         .status(409)
         .send({ problem: "username", message: "Cet username existe déjà" });
     }
 
-    if (
-      Object.keys(response2).length === 0 &&
-      Object.keys(response1).length === 0
-    ) {
+    if (response2.length === 0 && response1.length === 0) {
       const hash = await bcrypt.hashSync(req.body.password, 10);
 
       const dataForm: any = {
@@ -84,9 +79,8 @@ exports.login = async (req: any, res: any) => {
     err.map((oneError: any) => {
       errors = {
         ...errors,
-        [oneError.property]: oneError.constraints![
-          Object.keys(oneError.constraints!)[0]
-        ],
+        [oneError.property]:
+          oneError.constraints![Object.keys(oneError.constraints!)[0]],
       };
     });
     res.status(412).send(errors);
