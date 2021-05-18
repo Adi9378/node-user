@@ -101,7 +101,7 @@ exports.login = async (req: any, res: any) => {
       if (result === false) {
         res.status(401).send("Accès refusé");
       } else {
-        const token = jwt.sign({ userId: user[0].rowid }, "private", {
+        const token = jwt.sign({ userId: user[0].id }, process.env.JWTKEY, {
           expiresIn: "24h",
         });
 
@@ -109,29 +109,21 @@ exports.login = async (req: any, res: any) => {
         if (!addToken) {
           throw new Error("Echec de lajout du token");
         }
-        res.status(200).send({ user: user[0].rowid, token });
+        res.status(200).send({ user: user[0].id, token });
       }
     }
   );
 };
 
-/*
 exports.getUserById = async (req: any, res: any) => {
   try {
     const UserRepo: UserRepository = new UserRepository();
-    const response: any = await UserRepo.getById(req.params.id);
-    console.log("kkk", response);
-    if (
-      response[0].token !== req.params.token ||
-      response[0].token === undefined
-    ) {
-      res.status(401).send("Le token ne correspond pas");
-    }
+    const response: any = await UserRepo.getById(parseInt(req.params.id, 10));
     res.status(200).send(response);
   } catch (error: any) {
     throw new Error(error);
   }
-};*/
+};
 
 exports.getUser = async (req: any, res: any) => {
   /*if( !isEmail(req.params.email )){

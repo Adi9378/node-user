@@ -26,6 +26,12 @@ const Subscribe = () => {
             ...err.response.data,
           });
         }
+        if (err.response.status === 409) {
+          setErrors({
+            ...initialState,
+            [err.response.data.problem]: err.response.data.message,
+          });
+        }
       });
   };
 
