@@ -4,13 +4,16 @@ import { Redirect } from "react-router-dom";
 
 const Account = () => {
   const [redirect, setRedirect] = useState(false);
+  const [user, setUser] = useState({});
+
+  const handleDisconnect = () => {
+    localStorage.removeItem("ltok");
+    localStorage.removeItem("userId");
+    setRedirect(true);
+  };
+
   useEffect(() => {
     if (localStorage.getItem("ltok") && localStorage.getItem("userId")) {
-      console.log(
-        "vvv",
-        localStorage.getItem("ltok"),
-        localStorage.getItem("userId")
-      );
       axios
         .get(
           `http://localhost:3333/api/user/${localStorage.getItem("userId")}`,
@@ -18,9 +21,8 @@ const Account = () => {
             headers: { authorization: localStorage.getItem("ltok") },
           }
         )
-        .then((res) => console.log(res))
+        .then((res) => setUser(res.data))
         .catch((err) => {
-          console.log(err.response);
           localStorage.removeItem("ltok");
           localStorage.removeItem("userId");
           setRedirect(true);
@@ -33,7 +35,8 @@ const Account = () => {
   return (
     <>
       {redirect && <Redirect to="/login" />}
-      <div>Connecté</div>
+      <div>Hello {user.username}</div>
+      <button onClick={handleDisconnect}>Se déconnecter</button>
     </>
   );
 };

@@ -1,14 +1,13 @@
 import UserRepository from "../repositories/user";
 import UserValidator from "../validators/user";
-import { validate } from "class-validator";
+import { Request, Response } from "express";
+import { isEmail, isNumberString, validate } from "class-validator";
 import UserLoginValidator from "../validators/userLogin";
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 require("dotenv").config();
 
-exports.register = async (req: any, res: any) => {
-  console.log("yeak");
-
+exports.register = async (req: Request, res: Response) => {
   const userValid: UserValidator = new UserValidator(
     req.body.email,
     req.body.password,
@@ -37,6 +36,7 @@ exports.register = async (req: any, res: any) => {
 
   try {
     const UserRepo = new UserRepository();
+
     const response1: any = await UserRepo.getByEmail(req.body.email);
     if (response1.length !== 0) {
       return res
@@ -67,9 +67,9 @@ exports.register = async (req: any, res: any) => {
   }
 };
 
-exports.login = async (req: any, res: any) => {
+exports.login = async (req: Request, res: Response) => {
   const userValid: UserLoginValidator = new UserLoginValidator(
-    req.body.email,
+    req.body.login,
     req.body.password
   );
 
@@ -87,9 +87,9 @@ exports.login = async (req: any, res: any) => {
   }
 
   const userRepo: UserRepository = new UserRepository();
-  const user: any = await userRepo.getByEmail(req.body.email);
+  const user: any = await userRepo.getUserByLogin(req.body.login);
   if (user.length === 0) {
-    res.status(401).send("cet email n'existe pas");
+    res.status(401).send("Utilisateur inexistant");
   }
   bcrypt.compare(
     req.body.password,
@@ -105,35 +105,20 @@ exports.login = async (req: any, res: any) => {
           expiresIn: "24h",
         });
 
-        const addToken: any = await userRepo.updateToken(token, req.body.email);
-        if (!addToken) {
-          throw new Error("Echec de lajout du token");
-        }
         res.status(200).send({ user: user[0].id, token });
       }
     }
   );
 };
 
-exports.getUserById = async (req: any, res: any) => {
+exports.getUserById = async (req: Request, res: Response) => {
+  if (!isNumberString(req.params.id)) {
+    throw new Error("Id Invalid");
+  }
   try {
     const UserRepo: UserRepository = new UserRepository();
     const response: any = await UserRepo.getById(parseInt(req.params.id, 10));
-    res.status(200).send(response);
-  } catch (error: any) {
-    throw new Error(error);
-  }
-};
-
-exports.getUser = async (req: any, res: any) => {
-  /*if( !isEmail(req.params.email )){
-    return throw new Error("Ce n'est pas un email");
-  }*/
-
-  try {
-    const UserRepo: UserRepository = new UserRepository();
-    const response = await UserRepo.getByEmail(req.params.email);
-    res.status(200).send(response);
+    res.status(200).send(response[0]);
   } catch (error: any) {
     throw new Error(error);
   }

@@ -4,10 +4,14 @@ import db from "../db";
 export default class UserRepository {
   async create(user: IUser) {
     return new Promise((resolve, reject) => {
-      db.query("INSERT INTO user SET ?", user, (error: any, results: any) => {
-        if (error) throw error;
-        resolve(results);
-      });
+      db.query(
+        "INSERT INTO user SET ?",
+        user,
+        (error: Error, results: Response) => {
+          if (error) throw error;
+          resolve(results);
+        }
+      );
     });
   }
 
@@ -15,7 +19,7 @@ export default class UserRepository {
     return new Promise((resolve, reject) => {
       db.query(
         `SELECT * FROM user WHERE email = "${email}" LIMIT 1`,
-        (error: any, results: any) => {
+        (error: Error, results: Response) => {
           if (error) throw error;
           resolve(results);
         }
@@ -24,11 +28,10 @@ export default class UserRepository {
   }
 
   async getById(id: number) {
-    console.log("id", id);
     return new Promise((resolve, reject) => {
       db.query(
         `SELECT * FROM user WHERE id = "${id}" LIMIT 1`,
-        (error: any, results: any) => {
+        (error: Error, results: Response) => {
           if (error) throw error;
           resolve(results);
         }
@@ -40,7 +43,7 @@ export default class UserRepository {
     return new Promise((resolve, reject) => {
       db.query(
         `SELECT * FROM user WHERE username = "${username}" LIMIT 1`,
-        (error: any, results: any) => {
+        (error: Error, results: Response) => {
           if (error) throw error;
           resolve(results);
         }
@@ -52,7 +55,19 @@ export default class UserRepository {
     return new Promise((resolve, reject) => {
       db.query(
         `UPDATE user SET token = '${token}' WHERE email = '${email}'`,
-        (error: any, results: any) => {
+        (error: Error, results: Response) => {
+          if (error) throw error;
+          resolve(results);
+        }
+      );
+    });
+  }
+
+  async getUserByLogin(login: string) {
+    return new Promise((resolve, reject) => {
+      db.query(
+        `SELECT * FROM user WHERE email = "${login}" OR username = "${login}" LIMIT 1`,
+        (error: Error, results: Response) => {
           if (error) throw error;
           resolve(results);
         }

@@ -1,12 +1,12 @@
-import { Length, IsEmail, IsString } from "class-validator";
+import { Length, IsString } from "class-validator";
 export default class UserLoginValidator {
-  constructor(email: string, password: string) {
-    this.email = email;
+  constructor(login: string, password: string) {
+    this.login = login;
     this.password = password;
   }
 
-  @IsEmail()
-  email: string;
+  @IsString()
+  login: string;
 
   @Length(8, 25)
   @IsString()

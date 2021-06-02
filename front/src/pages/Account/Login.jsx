@@ -4,7 +4,7 @@ import { Link, Redirect } from "react-router-dom";
 
 const Login = () => {
   const initialState = {
-    email: "",
+    login: "",
     password: "",
   };
 
@@ -53,9 +53,9 @@ const Login = () => {
       <div>
         <form onSubmit={handleSubmit}>
           <div>
-            <label>Email</label>
-            <input onChange={handleChange} type="text" name="email" />
-            <div>{errors.email}</div>
+            <label>Email / Username</label>
+            <input onChange={handleChange} type="text" name="login" />
+            <div>{errors.login}</div>
           </div>
           <div>
             <label>Mot de passe</label>
